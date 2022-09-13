@@ -19,10 +19,7 @@ const createUserToken = async (user: any, req: Request, res: Response) => {
     },
     SECRET
   )
-
-  res
-    .status(200)
-    .send({ message: 'User authenticated.', token: token, userId: user.id })
+  return { token: token, userId: user.id }
 }
 
 export default createUserToken

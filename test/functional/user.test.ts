@@ -1,18 +1,11 @@
 import supertest from 'supertest'
 import app from '../../src/server'
-import connection from '../../dbconn/connection'
+import { prismaClient } from '../../dbconn/connection'
 
 describe('User register test', () => {
   beforeAll(async () => {
-    await connection.sync()
+    await prismaClient.$connect()
   })
-  it('should return success', async () => {
-    const { body, status } = await supertest(app).get('/users')
-    console.log('status', status)
-    expect(status).toBe(200)
-    expect(body).toStrictEqual({ message: 'Success!' })
-  })
-
   it('creating user', async () => {
     const user = {
       name: 'José Yan Lipu',
@@ -36,11 +29,10 @@ describe('User register test', () => {
       account_verified: false,
     }
     const response = await supertest(app).post('/users/register').send(user)
-    console.log('response', response.status)
     expect(response.status).toBe(200)
   })
 
-  afterAll(async () => {
-    await connection.close()
+  afterEach(async () => {
+    await prismaClient.$disconnect()
   })
 })

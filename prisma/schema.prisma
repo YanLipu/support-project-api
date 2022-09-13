@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+	binaryTargets = ["native", "linux-musl"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+	id Int @id @default(autoincrement())
+	name String
+	type Int
+	fantasy_name String?
+	cnpj_cpf String @unique
+	email String @unique
+	phone String?
+	address String
+	password String
+	access_type Int
+	state String
+	city String
+	district String
+	address_number String
+	complement String
+	pix_key String?
+	photo_path String?
+	description String?
+	account_confirmed Boolean @default(false)
+	account_verified Boolean @default(false)
+	campaign Campaign[]
+}
+
+model Campaign {
+	id Int @unique @id @default(autoincrement())
+	user User @relation(fields: [user_id], references: [id])
+	user_id Int
+	name String
+	description String
+	goal String
+	amount_raised String
+	monthly_cost String
+	categories CategoriesOnCampaign[]
+	verified Boolean @default(false)
+	sponsors Int
+	type String
+	photos_path String
+	videos_path String
+	created_at DateTime @default(now())
+	updated_at DateTime @default(now())
+}
+
+model Category {
+	id Int  @id @default(autoincrement())
+	name String
+	description String
+	campaigns CategoriesOnCampaign[]
+	created_at DateTime @default(now())
+	updated_at DateTime @default(now())
+}
+
+model CategoriesOnCampaign {
+	campaign Campaign @relation(fields: [campaign_id], references: [id])
+	campaign_id Int
+	category Category @relation(fields: [category_id], references: [id])
+	category_id Int
+	assigned_at DateTime @default(now())
+	@@id([campaign_id, category_id])
+}

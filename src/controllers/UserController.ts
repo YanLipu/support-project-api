@@ -1,6 +1,7 @@
-import User from '../../models/userModel'
 import { Request, Response } from 'express'
 import createUserToken from '../helpers/create-jwt'
+import { Prisma } from '@prisma/client'
+import { prismaClient } from '../../dbconn/connection'
 import getToken from '../helpers/get-token'
 import bcrypt from 'bcrypt'
 import jwt, { JwtPayload } from 'jsonwebtoken'
@@ -14,6 +15,7 @@ export default class UserController {
   //}
   public async userRegister(req: Request, res: Response): Promise<void> {
     try {
+      console.log('userRegister')
       const {
         name,
         type,
@@ -61,11 +63,10 @@ export default class UserController {
         return
       }
 
-      const verifyUserExist = await User.findOne({
+      const verifyUserExist = await prismaClient.user.findFirst({
         where: {
           email: email,
         },
-        raw: true,
       })
       console.log('verifyUserExist', verifyUserExist)
 
@@ -79,32 +80,33 @@ export default class UserController {
       const pwhash = await bcrypt.hash(password, salt)
       console.log('pwhash', pwhash)
 
-      const user = User.build({
-        name: name,
-        type: type,
-        password: pwhash,
-        fantasy_name: fantasy_name || null,
-        cnpj_cpf: cnpj_cpf,
-        email: email,
-        phone: phone || null,
-        tipoAcesso: 1,
-        address: address,
-        access_type: access_type,
-        state: state,
-        city: city,
-        district: district,
-        address_number: address_number,
-        complement: complement,
-        pix_key: pix_key || null,
-        photo_path: photo_path,
-        description: description,
-        account_confirmed: account_confirmed,
-        account_verified: account_verified,
+      const newUser = await prismaClient.user.create({
+        data: {
+          name: name,
+          type: type,
+          password: pwhash,
+          fantasy_name: fantasy_name || null,
+          cnpj_cpf: cnpj_cpf,
+          email: email,
+          phone: phone || null,
+          access_type: access_type,
+          address: address,
+          state: state,
+          city: city,
+          district: district,
+          address_number: address_number,
+          complement: complement,
+          pix_key: pix_key || null,
+          photo_path: photo_path,
+          description: description,
+          account_confirmed: account_confirmed,
+          account_verified: account_verified,
+        },
       })
-      console.log('user as', user)
-      const userCreated = await user.save()
-      console.log('userCreated', userCreated)
-      await createUserToken(userCreated.getDataValue, req, res)
+      await prismaClient.$disconnect()
+      console.log('newUser', newUser)
+      const { token, userId } = await createUserToken(newUser.id, req, res)
+      res.status(200).send({ token, userId })
     } catch (error) {
       res.status(500).send({ message: 'Error!', error: error })
     }

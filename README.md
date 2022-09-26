@@ -1,6 +1,6 @@
 ## Support Project API
 
-This project is an personal project focused in learning. My objective is practice basic principles of build a simple REST API using Node.js. 
+This project is an personal project focused in learning. My objective is practice the basics principles of build a simple REST API using Node.js. 
 
 I called this project as "Support" because my idea is develop a system where users are enabled to support and sponsor any social project.
 

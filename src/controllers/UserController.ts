@@ -1,11 +1,9 @@
 import { Request, Response } from 'express'
 import createUserToken from '../helpers/create-jwt'
-import { Prisma } from '@prisma/client'
-import { prismaClient } from '../../dbconn/connection'
+import { prismaClient } from '../database/connection'
 import getToken from '../helpers/get-token'
 import bcrypt from 'bcrypt'
 import jwt, { JwtPayload } from 'jsonwebtoken'
-import { request } from 'http'
 
 const SECRET = process.env.JWT_SECRET ? process.env.JWT_SECRET : 'senhajwt'
 
@@ -15,7 +13,6 @@ export default class UserController {
   //}
   public async userRegister(req: Request, res: Response): Promise<void> {
     try {
-      console.log('userRegister')
       const {
         name,
         type,
@@ -37,7 +34,6 @@ export default class UserController {
         account_confirmed,
         account_verified,
       } = req.body
-
       if (!name) {
         res.status(422).send({ message: 'Nome is required!' })
         return
@@ -68,7 +64,6 @@ export default class UserController {
           email: email,
         },
       })
-      console.log('verifyUserExist', verifyUserExist)
 
       if (verifyUserExist) {
         res.status(409).send({ message: 'This user already exist.' })
@@ -76,9 +71,7 @@ export default class UserController {
       }
 
       const salt = await bcrypt.genSalt(12)
-      console.log('salt', salt)
       const pwhash = await bcrypt.hash(password, salt)
-      console.log('pwhash', pwhash)
 
       const newUser = await prismaClient.user.create({
         data: {
@@ -103,8 +96,6 @@ export default class UserController {
           account_verified: account_verified,
         },
       })
-      await prismaClient.$disconnect()
-      console.log('newUser', newUser)
       const { token, userId } = await createUserToken(newUser.id, req, res)
       res.status(200).send({ token, userId })
     } catch (error) {
@@ -114,7 +105,6 @@ export default class UserController {
 
   public async testRoute(req: Request, res: Response): Promise<void> {
     try {
-      console.log('bateu aqui')
       res.status(200).send({ message: 'Success!' })
     } catch (error) {
       res.status(500).send('Error!')

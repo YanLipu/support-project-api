@@ -1,18 +1,15 @@
 import supertest from 'supertest'
 import app from '../../src/server'
-import { prismaClient } from '../../dbconn/connection'
+import { faker } from '@faker-js/faker'
 
 describe('User register test', () => {
-  beforeAll(async () => {
-    await prismaClient.$connect()
-  })
   it('creating user', async () => {
     const user = {
       name: 'José Yan Lipu',
       type: 1,
       fantasy_name: '',
-      cnpj_cpf: '123.123.123-12',
-      email: 'jose@teste.com',
+      cnpj_cpf: faker.random.numeric(),
+      email: faker.internet.email(),
       phone: '67999170828',
       address: 'Rua dos Bobos',
       password: 'senha123',
@@ -30,9 +27,5 @@ describe('User register test', () => {
     }
     const response = await supertest(app).post('/users/register').send(user)
     expect(response.status).toBe(200)
-  })
-
-  afterEach(async () => {
-    await prismaClient.$disconnect()
   })
 })

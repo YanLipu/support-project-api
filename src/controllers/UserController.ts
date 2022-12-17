@@ -7,8 +7,23 @@ import jwt, { JwtPayload } from 'jsonwebtoken'
 
 const SECRET = process.env.JWT_SECRET ? process.env.JWT_SECRET : 'senhajwt'
 
+/**
+ * Class with methods for User
+ *
+ * @export
+ * @class UserController
+ */
 export default class UserController {
-  public async userRegister(req: Request, res: Response): Promise<void> {
+
+	/**
+	 *Method with user registration
+	 *
+	 * @param {Request} req
+	 * @param {Response} res
+	 * @return {*}  {Promise<void>}
+	 * @memberof UserController
+	 */
+	public async userRegister(req: Request, res: Response): Promise<void> {
     try {
       const {
         name,
@@ -100,7 +115,15 @@ export default class UserController {
     }
   }
 
-  public async testRoute(req: Request, res: Response): Promise<void> {
+	/**
+	 *Method for controller health check
+	 *
+	 * @param {Request} req
+	 * @param {Response} res
+	 * @return {*}  {Promise<void>}
+	 * @memberof UserController
+	 */
+	public async testRoute(req: Request, res: Response): Promise<void> {
     try {
       res.status(200).send({ message: 'Success!' })
     } catch (error) {

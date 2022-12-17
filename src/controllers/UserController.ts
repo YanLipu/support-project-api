@@ -8,9 +8,6 @@ import jwt, { JwtPayload } from 'jsonwebtoken'
 const SECRET = process.env.JWT_SECRET ? process.env.JWT_SECRET : 'senhajwt'
 
 export default class UserController {
-  //private checkRequiredInformation(req: Request): Promise<void> {
-
-  //}
   public async userRegister(req: Request, res: Response): Promise<void> {
     try {
       const {
@@ -97,9 +94,9 @@ export default class UserController {
         },
       })
       const { token, userId } = await createUserToken(newUser.id, req, res)
-      res.status(200).send({ token, userId })
-    } catch (error) {
-      res.status(500).send({ message: 'Error!', error: error })
+      res.status(200).send({ message: 'success', token, userId })
+    } catch (error: any) {
+      res.status(500).send({ message: 'Error!', error: error.message })
     }
   }
 

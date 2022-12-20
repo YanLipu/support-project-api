@@ -1,11 +1,7 @@
 import { Request, Response } from 'express'
 import createUserToken from '../helpers/create-jwt'
 import { prismaClient } from '../database/connection'
-import getToken from '../helpers/get-token'
 import bcrypt from 'bcrypt'
-import jwt, { JwtPayload } from 'jsonwebtoken'
-
-const SECRET = process.env.JWT_SECRET ? process.env.JWT_SECRET : 'senhajwt'
 
 /**
  * Class with methods for User
@@ -15,7 +11,7 @@ const SECRET = process.env.JWT_SECRET ? process.env.JWT_SECRET : 'senhajwt'
  */
 export default class UserController {
 
-	/**
+  /**
 	 *Method with user registration
 	 *
 	 * @param {Request} req
@@ -23,7 +19,7 @@ export default class UserController {
 	 * @return {*}  {Promise<void>}
 	 * @memberof UserController
 	 */
-	public async userRegister(req: Request, res: Response): Promise<void> {
+  public async userRegister (req: Request, res: Response): Promise<void> {
     try {
       const {
         name,
@@ -44,7 +40,7 @@ export default class UserController {
         photo_path,
         description,
         account_confirmed,
-        account_verified,
+        account_verified
       } = req.body
       if (!name) {
         res.status(422).send({ message: 'Nome is required!' })
@@ -73,8 +69,8 @@ export default class UserController {
 
       const verifyUserExist = await prismaClient.user.findFirst({
         where: {
-          email: email,
-        },
+          email: email
+        }
       })
 
       if (verifyUserExist) {
@@ -105,17 +101,50 @@ export default class UserController {
           photo_path: photo_path,
           description: description,
           account_confirmed: account_confirmed,
-          account_verified: account_verified,
-        },
+          account_verified: account_verified
+        }
       })
-      const { token, userId } = await createUserToken(newUser.id, req, res)
+      const { token, userId } = await createUserToken(newUser, req, res)
       res.status(200).send({ message: 'success', token, userId })
     } catch (error: any) {
       res.status(500).send({ message: 'Error!', error: error.message })
     }
   }
 
-	/**
+  /**
+	 * User login
+	 *
+	 * @param {Request} req
+	 * @param {Response} res
+	 * @return {*}  {Promise<void>}
+	 * @memberof UserController
+	 */
+  public async login (req: Request, res: Response): Promise<void> {
+    try {
+      const { email, password } = req.body
+      const verifyUserExist = await prismaClient.user.findFirst({
+        where: {
+          email: email
+        }
+      })
+      if (!verifyUserExist) {
+        res.status(422).send({ message: 'This user already exist.' })
+        return
+      }
+
+      const checkPassword = await bcrypt.compare(password, verifyUserExist.password)
+      if (!checkPassword) {
+        res.status(422).send({ message: 'Password not valid.' })
+        return
+      }
+      const { token, userId } = await createUserToken(verifyUserExist.id, req, res)
+      res.status(200).send({ message: 'user logged', token, userId })
+    } catch (error) {
+      res.status(500).send({ message: 'Internal server error' })
+    }
+  }
+
+  /**
 	 *Method for controller health check
 	 *
 	 * @param {Request} req
@@ -123,7 +152,7 @@ export default class UserController {
 	 * @return {*}  {Promise<void>}
 	 * @memberof UserController
 	 */
-	public async testRoute(req: Request, res: Response): Promise<void> {
+  public async testRoute (req: Request, res: Response): Promise<void> {
     try {
       res.status(200).send({ message: 'Success!' })
     } catch (error) {

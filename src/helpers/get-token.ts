@@ -1,8 +1,26 @@
+import jwt from 'jsonwebtoken'
 import { Request } from 'express'
-const getToken = async (req: Request) => {
-  const authHeader = req.headers.authorization
-  const token = authHeader?.replace('Bearer ', '')
-  return token
-}
 
-export default getToken
+export default class TokenValidation {
+  request: Request
+
+  constructor (req: Request) {
+    this.request = req
+  }
+
+  public async getToken (): Promise<string> {
+    if (this.request.headers.authorization) {
+      const authHeader = this.request.headers.authorization
+      const token = authHeader?.replace('Bearer ', '')
+      return token
+    } else {
+      return ''
+    }
+  }
+
+  public checkIfTokenIsValid (token: string): boolean {
+    const decodedToken = jwt.decode(token)
+    console.log('decodedToken', decodedToken)
+    return !!decodedToken
+  }
+}

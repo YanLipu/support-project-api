@@ -137,7 +137,7 @@ export default class UserController {
         res.status(422).send({ message: 'Password not valid.' })
         return
       }
-      const { token, userId } = await createUserToken(verifyUserExist.id, req, res)
+      const { token, userId } = await createUserToken(verifyUserExist, req, res)
       res.status(200).send({ message: 'user logged', token, userId })
     } catch (error) {
       res.status(500).send({ message: 'Internal server error' })
@@ -154,6 +154,7 @@ export default class UserController {
 	 */
   public async testRoute (req: Request, res: Response): Promise<void> {
     try {
+      console.log('testRoute working')
       res.status(200).send({ message: 'Success!' })
     } catch (error) {
       res.status(500).send('Error!')

@@ -3,7 +3,7 @@ import app from '../../src/server'
 import { faker } from '@faker-js/faker'
 
 const EMAIL = faker.internet.email()
-let TOKEN
+let TOKEN: string
 const PW = 'senha123'
 
 describe('User register test', () => {
@@ -60,13 +60,21 @@ describe('User register test', () => {
     const response = await supertest(app).post('/users/register').send(user)
     expect(response.status).toBe(409)
   })
+})
 
+describe('Login test suit', ()=>{
   it('user login', async ()=>{
     const login = {
       email: EMAIL,
       password: PW
     }
     const response = await supertest(app).post('/users/login').send(login)
+    TOKEN = response.body.token as string
+    expect(response.status).toBe(200)
+  })
+
+  it('should be access protected route', async ()=>{
+    const response = await supertest(app).get('/users').set('Authorization', TOKEN)
     expect(response.status).toBe(200)
   })
 })

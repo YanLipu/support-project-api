@@ -8,6 +8,6 @@ const authentication = new Authentication()
 const router = Router()
 
 router.get('/projects/list', projectController.listProjects)
-router.post('/projects/new', authentication.checkIfUserIsLogged, projectController.listProjects)
+router.post('/projects/new', authentication.checkIfUserIsLogged, projectController.createProject)
 
 export default router

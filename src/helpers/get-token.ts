@@ -20,7 +20,6 @@ export default class TokenValidation {
 
   public checkIfTokenIsValid (token: string): boolean {
     const decodedToken = jwt.decode(token)
-    console.log('decodedToken', decodedToken)
     return !!decodedToken
   }
 }

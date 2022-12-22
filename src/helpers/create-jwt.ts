@@ -12,7 +12,6 @@ const SECRET = process.env.JWT_SECRET ? process.env.JWT_SECRET : 'senhajwt'
  * @param {Response} res
  */
 const createUserToken = async (user: any, req: Request, res: Response) => {
-  console.log('user', user)
   const token = jwt.sign(
     {
       user: user.name,

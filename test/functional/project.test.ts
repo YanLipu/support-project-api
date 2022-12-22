@@ -27,7 +27,7 @@ describe('Projects test suit', ()=>{
       amount_raised: '0',
       monthly_cost: '0',
       verified: false,
-      sponsors: 10,
+      sponsor: 10,
       type: '1',
       photos_path: 'not',
       videos_path: 'not'

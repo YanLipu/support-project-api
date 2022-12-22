@@ -19,9 +19,7 @@ export default class Authentication {
 	 */
   public async checkIfUserIsLogged (req: Request, res: Response, next: NextFunction) {
     const tokenValidation = new TokenValidation(req)
-    console.log('tokenValidation', tokenValidation)
     const token = await tokenValidation.getToken()
-    console.log('token', token)
     if (token) {
       const checkIfTokenIsValid = tokenValidation.checkIfTokenIsValid(token)
       if (checkIfTokenIsValid) {

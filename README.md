@@ -1,6 +1,6 @@
 ## Support Project API
 
-This project is an personal project focused in learning. My objective is practice the basics principles of build a simple REST API using Node.js. 
+This project is an personal project focused in learning. My objective is practice the basics principles of build a simple REST API using Node.js.
 
 I called this project as "Support" because my idea is develop a system where users are enabled to support and sponsor any social project.
 
@@ -12,18 +12,25 @@ So, basicaly the user can be able to create any project what we called by campai
 
 The following diagram show how i thought an architecture to apply 3 core concepts, they are: TDD, Cloud Storage and Migrations.
 
-![](assets/basic_design.svg "API Design")
+![](assets/system_design.png 'API Design')
 
 ### Technologies
 
 ##### TDD
+
 > Jest
 > Supertest
+
 ##### API
+
 > Node.js
 > Express
 > Typescript
+
 ##### BUCKET
+
 > Amazon S3
+
 ##### Database
+
 > PostgreSQL (Docker Container)
